@@ -1,5 +1,6 @@
 ﻿using PruebaTecnicaAPI.Common;
 using PruebaTecnicaAPI.Models;
+using System.Globalization;
 using System.Text.Json;
 
 namespace PruebaTecnicaAPI.Services
@@ -17,14 +18,23 @@ namespace PruebaTecnicaAPI.Services
 		{
 			string body = JsonSerializer.Serialize(ticketDetailParam);
 			var response = await _common.ExecuteHttpRequestAsync(HttpMethod.Post, "new/seats", body);
-			return JsonSerializer.Deserialize<List<TicketDetail>>(await response.Content.ReadAsStringAsync());
+			var result = JsonSerializer.Deserialize<List<TicketDetail>>(await response.Content.ReadAsStringAsync());
+			return result.OrderBy(s => s.position.y)
+							   .ThenBy(s => s.position.x).ToList();
 		}
 
 		public async Task<List<TicketFilter>> GetTicketFiltersAsync(TicketParam ticketParam)
 		{
 			string body = JsonSerializer.Serialize(ticketParam);
 			var response = await _common.ExecuteHttpRequestAsync(HttpMethod.Post, "new/search", body);
-			return JsonSerializer.Deserialize<List<TicketFilter>>(await response.Content.ReadAsStringAsync());
+			var result = JsonSerializer.Deserialize<List<TicketFilter>>(await response.Content.ReadAsStringAsync());
+
+			foreach (var item in result)
+			{
+				item.orderDate = DateTime.ParseExact($"{item.departure.date} {item.departure.time}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+			}
+
+			return result.OrderBy(x => x.orderDate).ToList();
 		}
 	}
 }

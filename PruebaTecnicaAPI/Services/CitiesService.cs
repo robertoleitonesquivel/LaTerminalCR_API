@@ -19,5 +19,11 @@ namespace PruebaTecnicaAPI.Services
 			var response = await _common.ExecuteHttpRequestAsync(HttpMethod.Get, "stops");
 			return JsonSerializer.Deserialize<List<Cities>>(await response.Content.ReadAsStringAsync());
 		}
+
+		public async Task<DetailCities> GetDetailCities(string id)
+		{
+			var response = await _common.ExecuteHttpRequestAsync(HttpMethod.Get, $"stops/{id}");
+			return JsonSerializer.Deserialize<DetailCities>(await response.Content.ReadAsStringAsync());
+		}
 	}
 }

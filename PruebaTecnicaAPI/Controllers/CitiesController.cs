@@ -25,7 +25,28 @@ namespace PruebaTecnicaAPI.Controllers
 
 				if (cities is null || cities.Count == 0)
 				{
-					return NotFound("No se encontraron ciudades.");
+					return NotFound(new { Message = "No se encontraron ciudades." });
+				}
+
+				return Ok(cities);
+			}
+			catch (Exception ex)
+			{
+
+				return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
+			}
+		}
+
+		[HttpGet("GetDetail")]
+		public async Task<IActionResult> Get(string id)
+		{
+			try
+			{
+				var cities = await _citiesService.GetDetailCities(id);
+
+				if (cities is null)
+				{
+					return NotFound(new { Message = "No se encontro el detalle de la ciudad." });
 				}
 
 				return Ok(cities);

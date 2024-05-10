@@ -19,6 +19,7 @@
 		public string travelCancellationLimitDate { get; set; }
 		public int travelCancellationFee { get; set; }
 		public bool manualConfirmation { get; set; }
+		public DateTime? orderDate { get; set; }	
 	}
 
 	public class To
