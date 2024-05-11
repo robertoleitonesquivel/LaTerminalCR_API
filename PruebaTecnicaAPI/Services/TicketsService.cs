@@ -1,4 +1,5 @@
-﻿using PruebaTecnicaAPI.Common;
+﻿using Newtonsoft.Json;
+using PruebaTecnicaAPI.Common;
 using PruebaTecnicaAPI.Models;
 using System.Globalization;
 using System.Text.Json;
@@ -17,21 +18,20 @@ namespace PruebaTecnicaAPI.Services
 
 		public async Task<List<TicketDetail>> GetTicketDetailAsync(TicketDetailParam ticketDetailParam)
 		{
-			string body = JsonSerializer.Serialize(ticketDetailParam);
+			string body = JsonConvert.SerializeObject(ticketDetailParam);
 			var response = await _common.ExecuteHttpRequestAsync(HttpMethod.Post, "new/seats", body);
 			JsonSerializerOptions options = new JsonSerializerOptions();
-			options.Converters.Add(new JsonStringEnumConverter());
-			options.Converters.Add(new StringToIntConverter());
-			var result = JsonSerializer.Deserialize<List<TicketDetail>>(await response.Content.ReadAsStringAsync(),options);
+	
+			var result = JsonConvert.DeserializeObject<List<TicketDetail>>(await response.Content.ReadAsStringAsync());
 			return result.OrderBy(s => s.position.y)
 							   .ThenBy(s => s.position.x).ToList();
 		}
 
 		public async Task<List<TicketFilter>> GetTicketFiltersAsync(TicketParam ticketParam)
 		{
-			string body = JsonSerializer.Serialize(ticketParam);
+			string body = JsonConvert.SerializeObject(ticketParam);
 			var response = await _common.ExecuteHttpRequestAsync(HttpMethod.Post, "new/search", body);
-			var result = JsonSerializer.Deserialize<List<TicketFilter>>(await response.Content.ReadAsStringAsync());
+			var result = JsonConvert.DeserializeObject<List<TicketFilter>>(await response.Content.ReadAsStringAsync());
 
 			foreach (var item in result)
 			{
@@ -41,28 +41,5 @@ namespace PruebaTecnicaAPI.Services
 			return result.OrderBy(x => x.orderDate).ToList();
 		}
 
-		public class StringToIntConverter : JsonConverter<int>
-		{
-			public override int Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-			{
-				if (reader.TokenType == JsonTokenType.String && int.TryParse(reader.GetString(), out int intValue))
-				{
-					return intValue;
-				}
-				else if (reader.TokenType == JsonTokenType.Number)
-				{
-					return reader.GetInt32();
-				}
-				else
-				{
-					throw new JsonException($"Unexpected token type: {reader.TokenType}");
-				}
-			}
-
-			public override void Write(Utf8JsonWriter writer, int value, JsonSerializerOptions options)
-			{
-				writer.WriteNumberValue(value);
-			}
-		}
 	}
 }
