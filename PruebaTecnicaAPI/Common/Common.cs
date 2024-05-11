@@ -1,6 +1,8 @@
 ﻿
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace PruebaTecnicaAPI.Common
 {
