@@ -25,7 +25,7 @@ namespace PruebaTecnicaAPI.Controllers
 
 				if (response is null || response.Count == 0)
 				{
-					return NotFound("No se encontraron vuelos disponibles.");
+					return NotFound(new { Message = "No se encontraron vuelos disponibles." });
 				}
 
 				return Ok(response);
@@ -46,7 +46,7 @@ namespace PruebaTecnicaAPI.Controllers
 
 				if (response is null)
 				{
-					return NotFound("No se obtuvo el detalle del vuelo.");
+					return NotFound(new { Message = "No se obtuvo el detalle del vuelo." });
 				}
 
 				return Ok(response);
