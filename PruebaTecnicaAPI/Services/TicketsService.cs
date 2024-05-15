@@ -21,10 +21,8 @@ namespace PruebaTecnicaAPI.Services
 			string body = JsonConvert.SerializeObject(ticketDetailParam);
 			var response = await _common.ExecuteHttpRequestAsync(HttpMethod.Post, "new/seats", body);
 			JsonSerializerOptions options = new JsonSerializerOptions();
-	
-			var result = JsonConvert.DeserializeObject<List<TicketDetail>>(await response.Content.ReadAsStringAsync());
-			return result.OrderBy(s => s.position.y)
-							   .ThenBy(s => s.position.x).ToList();
+			return JsonConvert.DeserializeObject<List<TicketDetail>>(await response.Content.ReadAsStringAsync());
+			//return result.OrderBy(s => s.position.y).ThenBy(s => s.position.x).ToList();
 		}
 
 		public async Task<List<TicketFilter>> GetTicketFiltersAsync(TicketParam ticketParam)
